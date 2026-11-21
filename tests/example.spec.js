@@ -39,7 +39,7 @@ test('LinkedIn Login Automation', async ({ page }) => {
     // await email.waitFor({ state: 'visible' });
     await expect(email.last()).toBeVisible({ timeout: 10000 });
     await email.last().fill('surajvcpuc@gmail.com');    
-    await password.last().fill('linkedin@4545');
+    await password.last().fill('******');
     
     // scroll down to the Sign in button
     await page.mouse.wheel(0,500);
