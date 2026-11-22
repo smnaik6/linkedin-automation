@@ -55,15 +55,23 @@ test('LinkedIn Login Automation', async ({ page }) => {
     await expect(searchBox.last()).toBeEditable({ timeout: 20000 });
     // await searchBox.waitFor({ state: 'visible' });
     await page.waitForLoadState('load');        // Wait for the page to load completely
-    await searchBox.last().fill('SDET');
+    await searchBox.last().fill('QA hiring banglore');
     await page.waitForTimeout(2000);            // Wait for 2 seconds before pressing Enter
+    await page.waitForLoadState('load');        // Wait for the page to load completely           
     await searchBox.last().press('Enter');
 
-    // await page.waitForTimeout(5000);
+    await page.waitForLoadState('load');        // Wait for the page to load completely           
+    // await page.waitForLoadState('networkidle'); // Wait for network to be idle
+    // await page.waitForTimeout(5000);            // Wait for 5 seconds before clicking on the filter
 
-    await expect(postsFilter).toBeVisible({ timeout: 10000 });
+    await page.waitForLoadState('load');        // Wait for the page to load completely           
+    await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the page to be fully loaded
+    // await page.waitForEvent('load'); // Wait for the load event to be fired
+
+    await expect(postsFilter).toBeVisible({ timeout: 20000 });
     await postsFilter.click();
-    await expect(datePostedFilter).toBeVisible({ timeout: 10000 });
+    await page.waitForLoadState('load');
+    await expect(datePostedFilter).toBeVisible({ timeout: 20000 });
     await datePostedFilter.click();
     await expect(past24HoursFilter).toBeVisible({ timeout: 10000 });
     await past24HoursFilter.click();
@@ -71,6 +79,50 @@ test('LinkedIn Login Automation', async ({ page }) => {
     await showResultsButton.click();
     
     await page.waitForLoadState('load');
+
+    // const allText = ""+await page.locator('body').textContent();
+// const allText = await page.locator("body").evaluate(element => {
+//     return element.textContent;
+// });
+    // console.log(allText);
+
+    // const allText = await page.locator("body").textContent() || "";
+
+    
+// const elements = await page.locator("//strong").allTextContents();
+
+
+// const elementsa = await page.locator("//a").allTextContents();
+// for (const element of elements) {
+//     const text = await element.textContent();
+//     console.log(text?.trim());
+// }
+
+// elements.forEach((text) => {
+//     console.log(text.trim());
+// });
+
+// elementsa.forEach((text) => {
+//     console.log(text.trim());
+// });
+
+    const mailLinks = await page.locator('a[href^="mailto:"]').all();
+    const mailAddresses = await Promise.all(mailLinks.map(async (link) => {
+        const href = await link.getAttribute('href');
+        return href ? href.replace('mailto:', '') : null;
+    }));    
+
+
+    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+
+    const mailLinks2 = await page.locator("a[href^='mailto:']").evaluateAll((links) => links.map(link => link.getAttribute('href')?.replace('mailto:', '')).filter(Boolean));
+    // Extract emails
+    // const emails = allText.match(emailRegex) || [];
+
+    // Remove duplicates
+    // const uniqueEmails = [...new Set(emails.map(email => email.toLowerCase()))];
+
+    // console.log(uniqueEmails.join(", "));
 
     
     // await expect(profilePicture).toBeVisible({ timeout: 10000 });
